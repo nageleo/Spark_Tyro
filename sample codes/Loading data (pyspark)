@@ -1,0 +1,57 @@
+## How to load data in SPARK
+
+//Read CSV into Data Frame
+val df = spark.read
+  .format("csv")
+  .option("header", "true")
+  .option("inferSchema", "true")
+  .option("nullValue", "NA")
+  .option("timestampFormat", "yyyy-MM-dd'T'HH:mm:ss")
+  .option("mode", "failfast")
+  .load("/path/survey.csv")
+
+//Write Data Frame to Parquet
+df.write
+  .format("json")
+  .mode("overwrite")
+  .save("/path/")
+
+
+# JDBC connection
+
+# First we need to add the dependency for jdbc connector using similar command (depends on your db)
+spark-shell --packages org.postgresql:postgresql:9.4.1207
+
+//spark-shell --packages org.postgresql:postgresql:9.4.1207
+val pgDF_table = spark.read
+  .format("jdbc")
+  .option("driver", "org.postgresql.Driver")
+  .option("url", "jdbc:postgresql://10.128.0.4:5432/sparkDB")
+  .option("dbtable", "survey_results")
+  .option("user", "prashant")
+  .option("password", "pandey")
+  .load()
+pgDF_table.show
+
+
+//Write Data Frame to JDBC
+dfout.write
+  .format("jdbc")
+  .mode("overwrite")
+  .option("driver", "org.postgresql.Driver")
+  .option("url", "jdbc:postgresql://10.128.0.4:5432/sparkDB")
+  .option("dbtable", "survey_results")
+  .option("user", "prashant")
+  .option("password", "pandey")
+  .save()
+
+# It is not recommended to create the table directly from SPARK while inserting it, So the other way would be to create the table in DB and then insert data using spark
+# Below are the 2 additional commands you need to use while writing data to RDBMS, if the table is already present
+ 
+  .mode("overwrite")
+  .option("truncate", "true")
+
+
+
+
+
