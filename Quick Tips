@@ -1,0 +1,31 @@
+While deciding no. of partitions for your data
+
+1) The lower bound for spark partitions is determined by 2 X number of cores in the cluster available to application.
+2) Determining the upper bound for partitions in Spark, the task should take 100+ ms time to execute. 
+   If it takes less time, then the partitioned data might be too small or the application might be spending extra time in scheduling tasks.
+   
+ There are two ways, which spark supports to parition data
+ 1) Hash Partitioning in Spark
+ 2) Range Partitioning in Spark
+ 
+ To know more visit https://www.dezyre.com/article/how-data-partitioning-in-spark-helps-achieve-more-parallelism/297
+ 
+ 
+ 
+ Paritions on Spark
+ -- Parition is the smallest unit of work that Spark handles.
+ -- By default parition of data will be done based on block size of HDFS (which is 128 MB)
+      Example: If you have data of 1 GB 
+                By default total of partitions SPark will create is 1024/128 = 8 Partitions
+       
+ -- What does this have to do with our limit? Well a partition to Spark is basically the smallest unit of work that Spark will handle. 
+    This means for several operations Spark needs to allocate enough memory to store an entire Partition. 
+     It stores the Partition with Java structures whose size is determined by an Integer. 
+     This leads to our 2GB limit, if a single Partition exceeds 2GB of memory and needs to be shuffled or cached we will run into problems.
+ 
+ -- Shuffle operations leads to change in partitions, which can be of unlimited size, thats when 2GB comes into the picture.
+ 
+ Very Good article http://www.russellspitzer.com/2018/05/10/SparkPartitions/
+ 
+ 
+ 
